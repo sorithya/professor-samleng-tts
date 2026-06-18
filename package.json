@@ -82,6 +82,7 @@
       "artifactName": "${productName}-${version}-Portable.${ext}"
     },
     "mac": {
+      "identity": null,
       "target": [
         {
           "target": "dmg",
