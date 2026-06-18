@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Professor Somleng TTS</string>
+    <string name="title_activity_main">Professor Somleng TTS</string>
+    <string name="package_name">com.professorsomleng.tts</string>
+    <string name="custom_url_scheme">com.professorsomleng.tts</string>
+</resources>

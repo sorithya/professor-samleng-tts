@@ -1,0 +1,49 @@
+name: Build Desktop Application
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js & Package App
+        run: |
+          if [ "${{ matrix.os }}" == "macos-latest" ]; then
+            npm run electron:build:mac
+          else
+            npm run electron:build:win
+          fi
+        shell: bash
+
+      - name: Upload Installers as Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Professor-Somleng-TTS-${{ matrix.os }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.zip
+          if-no-files-found: warn

@@ -1,0 +1,188 @@
+{
+  "app": {
+    "name": "Professor Somleng TTS",
+    "tagline": "Transform Text to Natural Khmer Speech",
+    "description": "Professional text-to-speech studio with natural Khmer voices"
+  },
+  "nav": {
+    "studio": "Studio",
+    "home": "Home",
+    "history": "History",
+    "account": "Account",
+    "signIn": "Sign In"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "en": "English",
+    "km": "ខ្មែរ",
+    "switchTo": "Switch language"
+  },
+  "landing": {
+    "hero": {
+      "title": "Transform Text to Natural Khmer Speech",
+      "subtitle": "Professional text-to-speech with the most natural Khmer voices. Create voiceovers, narrations, and audio content in seconds.",
+      "cta": "Try the Studio",
+      "ctaSecondary": "Listen to Samples"
+    },
+    "features": {
+      "title": "Why Choose Professor Somleng?",
+      "subtitle": "Built for Khmer from the ground up",
+      "khmerFirst": {
+        "title": "Khmer-First Design",
+        "description": "Optimized for Khmer script with proper rendering of subscripts, coeng, and diacritics."
+      },
+      "naturalVoices": {
+        "title": "Natural Neural Voices",
+        "description": "AI-powered voices that sound natural and expressive, not robotic."
+      },
+      "multipleStyles": {
+        "title": "12 Voice Styles",
+        "description": "From news broadcast to poetry, choose the perfect tone for your content."
+      },
+      "fineControl": {
+        "title": "Fine-Tuned Control",
+        "description": "Adjust speed, pitch, and volume to get exactly the delivery you need."
+      },
+      "fastGeneration": {
+        "title": "Instant Generation",
+        "description": "Generate high-quality audio in seconds, not minutes."
+      },
+      "downloadFormats": {
+        "title": "MP3 & WAV Export",
+        "description": "Download in the format you need for any project or platform."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Type or Paste",
+        "description": "Enter your Khmer or English text in the editor."
+      },
+      "step2": {
+        "title": "Choose Your Voice",
+        "description": "Select a voice, style, and fine-tune the delivery."
+      },
+      "step3": {
+        "title": "Generate & Download",
+        "description": "Click Generate and download your audio file."
+      }
+    },
+    "footer": {
+      "product": "Product",
+      "resources": "Resources",
+      "legal": "Legal",
+      "copyright": "© 2024 Professor Somleng TTS. All rights reserved.",
+      "madeWith": "Made with ❤️ for the Khmer language"
+    }
+  },
+  "studio": {
+    "title": "TTS Studio",
+    "editor": {
+      "label": "Editor",
+      "fontSize": "Font Size",
+      "placeholder": "Type or paste your text here...\n\nTry: Hello! Welcome to Professor Somleng TTS, the best text-to-speech tool for Khmer.",
+      "charCount": "{count} / {max} characters",
+      "wordCount": "{count} words",
+      "clear": "Clear",
+      "tooLong": "Text exceeds maximum length",
+      "decreaseFont": "Decrease font size",
+      "increaseFont": "Increase font size"
+    },
+    "language": {
+      "label": "Language",
+      "khmer": "Khmer (ភាសាខ្មែរ)",
+      "english": "English"
+    },
+    "voice": {
+      "label": "Voice",
+      "preview": "Preview",
+      "male": "Male",
+      "female": "Female"
+    },
+    "style": {
+      "label": "Voice Style",
+      "default": "Default",
+      "news": "News / Broadcast",
+      "narration": "Narration / Storytelling",
+      "conversational": "Conversational",
+      "cheerful": "Cheerful / Excited",
+      "calm": "Calm",
+      "sad": "Sad",
+      "whisper": "Whisper",
+      "serious": "Serious / Formal",
+      "customerService": "Customer Service",
+      "advertisement": "Advertisement",
+      "poetry": "Poetry"
+    },
+    "controls": {
+      "speed": "Speed",
+      "pitch": "Pitch",
+      "volume": "Volume",
+      "reset": "Reset",
+      "resetAll": "Reset All"
+    },
+    "emotion": {
+      "label": "Emotion Controls",
+      "preset": "Emotion Preset",
+      "neutral": "Neutral",
+      "happy": "Happy",
+      "sad": "Sad",
+      "excited": "Excited",
+      "angry": "Angry",
+      "calm": "Calm",
+      "nervous": "Nervous",
+      "serious": "Serious",
+      "neutralDesc": "Natural, balanced delivery with no specific emotion",
+      "happyDesc": "Warm, bright, and cheerful with a smile in the voice",
+      "sadDesc": "Gentle, melancholic, and reflective delivery",
+      "excitedDesc": "High energy, enthusiastic, and vibrant",
+      "angryDesc": "Intense, forceful, and sharp delivery",
+      "calmDesc": "Serene, soothing, and peaceful tone",
+      "nervousDesc": "Hesitant, cautious, with subtle tension",
+      "seriousDesc": "Authoritative, formal, and gravitas-filled",
+      "expressiveness": "Expressiveness",
+      "intensity": "Style Intensity",
+      "fidelity": "Clone Fidelity",
+      "fidelityWarning": "High expressiveness may reduce voice clone fidelity",
+      "resetAll": "Reset All",
+      "info": "Emotion controls shape how the cloned voice delivers text. Adjust expressiveness for pitch/tempo variation, intensity for emotion strength, and fidelity for clone accuracy."
+    },
+    "generate": {
+      "button": "Generate Speech",
+      "generating": "Generating...",
+      "chars": "{count} characters"
+    },
+    "player": {
+      "title": "Generated Audio",
+      "download": "Download",
+      "downloadMp3": "Download MP3",
+      "downloadWav": "Download WAV",
+      "noAudio": "Generate speech to see the audio player"
+    },
+    "errors": {
+      "emptyText": "Please enter some text to generate speech.",
+      "tooLong": "Text is too long. Maximum {max} characters allowed.",
+      "generationFailed": "Failed to generate speech. Please try again.",
+      "quotaExceeded": "You have exceeded your monthly character limit.",
+      "rateLimited": "Too many requests. Please wait a moment."
+    }
+  },
+  "history": {
+    "title": "Generation History",
+    "empty": "No generations yet. Create some speech in the Studio!",
+    "goToStudio": "Go to Studio",
+    "clearAll": "Clear All",
+    "clearConfirm": "Are you sure? This will delete all history.",
+    "entries": "{count} generations",
+    "play": "Play",
+    "download": "Download",
+    "delete": "Delete",
+    "deleted": "Entry deleted",
+    "cleared": "History cleared",
+    "saved": "Saved to history"
+  }
+}
