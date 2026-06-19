@@ -243,3 +243,17 @@
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: oklch(0.5 0.02 280 / 50%);
 }
+
+/* Khmer OS Battambang font for controls column only */
+.khmer-column,
+.khmer-column * {
+  font-family: var(--font-inter), 'Khmer OS Battambang', 'Siemreap', var(--font-khmer), sans-serif !important;
+}
+
+/* Maintain monospace formatting for code tags and numbers in the sidebar */
+.khmer-column .font-mono,
+.khmer-column code,
+.khmer-column kbd,
+.khmer-column pre {
+  font-family: var(--font-mono), monospace !important;
+}

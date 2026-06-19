@@ -39,7 +39,7 @@ export function StudioClient() {
         </div>
 
         {/* Right column: Controls — scrollable sidebar */}
-        <div className="lg:col-span-2 min-h-0">
+        <div className="lg:col-span-2 min-h-0 khmer-column">
           <div className="h-full overflow-y-auto overscroll-contain rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm p-5 space-y-5 shadow-sm scrollbar-thin">
             <ProviderSelector />
 
