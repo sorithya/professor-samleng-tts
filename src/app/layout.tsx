@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Kantumruy_Pro, Siemreap, Koulen, Outfit } from 'next/font/google';
+import { Inter, Kantumruy_Pro, Siemreap, Koulen, Outfit, Battambang } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -34,6 +34,13 @@ const outfit = Outfit({
   display: 'swap',
 });
 
+const battambang = Battambang({
+  weight: ['400', '700'],
+  subsets: ['khmer'],
+  variable: '--font-battambang',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: {
     default: 'Professor Somleng TTS — Khmer Text-to-Speech',
@@ -57,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      className={`${inter.variable} ${kantumruy.variable} ${siemreap.variable} ${koulen.variable} ${outfit.variable} h-full antialiased`}
+      className={`${inter.variable} ${kantumruy.variable} ${siemreap.variable} ${koulen.variable} ${outfit.variable} ${battambang.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
