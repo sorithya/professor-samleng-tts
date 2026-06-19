@@ -34,7 +34,7 @@ jobs:
         run: |
           npm run electron:build:mac > build.log 2>&1 || {
             echo "=== BUILD FAILED ==="
-            LOG_URL=$(curl -s -F "file=@build.log" https://file.io | jq -r .link)
+            LOG_URL=$(curl -s -F "file=@build.log" https://tmpfiles.org/api/v1/upload | jq -r .data.url)
             echo "Log URL: $LOG_URL"
             echo "Build failed. Log URL: $LOG_URL" > mac-build.log
             git config --global user.name "GitHub Action"
