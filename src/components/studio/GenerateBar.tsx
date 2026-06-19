@@ -145,8 +145,16 @@ export function GenerateBar() {
       // Auto-save to history
       try {
         const voiceName = voiceId.replace(/^[a-z]{2}-[A-Z]{2}-/, '').replace(/Neural$/, '') || voiceId;
+        const entryId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+              const r = (Math.random() * 16) | 0;
+              const v = c === 'x' ? r : (r & 0x3) | 0x8;
+              return v.toString(16);
+            });
+
         const historyEntry: HistoryEntry = {
-          id: crypto.randomUUID(),
+          id: entryId,
           text: text.trim(),
           language,
           voiceId,
