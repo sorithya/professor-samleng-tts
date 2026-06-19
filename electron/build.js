@@ -133,6 +133,32 @@ if (fs.existsSync(envSrc)) {
   console.log(`  ✓ Copied .env`);
 }
 
+// Step 2b: Rename node_modules and .next to prevent electron-builder from ignoring them
+console.log('\n🔄 Step 2b: Renaming directories to bypass ignore filters...');
+const nodeModulesSrc = path.join(appDir, 'node_modules');
+const nodeModulesDest = path.join(appDir, 'standalone_node_modules');
+if (fs.existsSync(nodeModulesSrc)) {
+  if (fs.existsSync(nodeModulesDest)) {
+    fs.rmSync(nodeModulesDest, { recursive: true, force: true });
+  }
+  fs.renameSync(nodeModulesSrc, nodeModulesDest);
+  console.log(`  ✓ Renamed node_modules -> standalone_node_modules`);
+} else {
+  console.warn(`  ⚠️ node_modules not found in standalone output: ${nodeModulesSrc}`);
+}
+
+const nextSrc = path.join(appDir, '.next');
+const nextDest = path.join(appDir, 'standalone_next');
+if (fs.existsSync(nextSrc)) {
+  if (fs.existsSync(nextDest)) {
+    fs.rmSync(nextDest, { recursive: true, force: true });
+  }
+  fs.renameSync(nextSrc, nextDest);
+  console.log(`  ✓ Renamed .next -> standalone_next`);
+} else {
+  console.warn(`  ⚠️ .next not found in standalone output: ${nextSrc}`);
+}
+
 // Step 3: Package with electron-builder
 console.log('\n🔨 Step 3: Packaging with electron-builder...');
 run(`npx electron-builder ${platform.flag} -c.npmRebuild=false --publish never`);

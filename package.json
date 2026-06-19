@@ -20,6 +20,7 @@
   "build": {
     "appId": "com.samlengtts.app",
     "productName": "Professor Somleng TTS",
+    "afterPack": "electron/after-pack.js",
     "copyright": "Copyright © 2026 Professor Somleng TTS",
     "npmRebuild": false,
     "directories": {
