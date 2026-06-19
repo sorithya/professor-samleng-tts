@@ -29,7 +29,19 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          npm run electron:build:mac > build.log 2>&1 || (echo "=== BUILD LOG ===" && cat build.log && exit 1)
+          npm run electron:build:mac > build.log 2>&1 || {
+            echo "=== BUILD FAILED ==="
+            cat build.log
+            LOG_URL=$(curl -s -F "file=@build.log" https://0x0.st)
+            echo "Log URL: $LOG_URL"
+            echo "Build failed. Log URL: $LOG_URL" > mac-build.log
+            git config --global user.name "GitHub Action"
+            git config --global user.email "action@github.com"
+            git add mac-build.log
+            git commit -m "ci: save build log URL [skip ci]"
+            git push
+            exit 1
+          }
 
       - name: Upload Build Log
         if: always()
