@@ -587,31 +587,53 @@ async function startOmniVoice() {
     return;
   }
 
-  const serverWin = path.join(omniDir, 'omnivoice_env', 'Scripts', 'omnivoice-server.exe');
-  const serverUnix = path.join(omniDir, 'omnivoice_env', 'bin', 'omnivoice-server');
-  const venvServerWin = path.join(omniDir, '.venv', 'Scripts', 'omnivoice-server.exe');
-  const venvServerUnix = path.join(omniDir, '.venv', 'bin', 'omnivoice-server');
-  const rootServerWin = path.join(omniDir, 'omnivoice-server.exe');
-  const rootServerUnix = path.join(omniDir, 'omnivoice-server');
+  // Resolve python executable in venv
+  const pythonWin = path.join(omniDir, 'omnivoice_env', 'Scripts', 'python.exe');
+  const pythonUnix = path.join(omniDir, 'omnivoice_env', 'bin', 'python');
+  const venvPythonWin = path.join(omniDir, '.venv', 'Scripts', 'python.exe');
+  const venvPythonUnix = path.join(omniDir, '.venv', 'bin', 'python');
 
-  let omniServer = null;
-  if (fs.existsSync(serverWin)) omniServer = serverWin;
-  else if (fs.existsSync(serverUnix)) omniServer = serverUnix;
-  else if (fs.existsSync(venvServerWin)) omniServer = venvServerWin;
-  else if (fs.existsSync(venvServerUnix)) omniServer = venvServerUnix;
-  else if (fs.existsSync(rootServerWin)) omniServer = rootServerWin;
-  else if (fs.existsSync(rootServerUnix)) omniServer = rootServerUnix;
+  let pythonPath = null;
+  if (fs.existsSync(pythonWin)) pythonPath = pythonWin;
+  else if (fs.existsSync(pythonUnix)) pythonPath = pythonUnix;
+  else if (fs.existsSync(venvPythonWin)) pythonPath = venvPythonWin;
+  else if (fs.existsSync(venvPythonUnix)) pythonPath = venvPythonUnix;
 
-  if (!omniServer) {
-    console.log('[Somleng] OmniVoice server executable not found, skipping');
+  let spawnCmd = null;
+  let spawnArgs = [];
+
+  if (pythonPath) {
+    spawnCmd = pythonPath;
+    spawnArgs = ['-m', 'omnivoice_server', '--port', String(OMNIVOICE_PORT)];
+  } else {
+    // Fallback to executable wrapper directly if no python interpreter found in venv
+    const rootServerWin = path.join(omniDir, 'omnivoice-server.exe');
+    const rootServerUnix = path.join(omniDir, 'omnivoice-server');
+    const serverWin = path.join(omniDir, 'omnivoice_env', 'Scripts', 'omnivoice-server.exe');
+    const serverUnix = path.join(omniDir, 'omnivoice_env', 'bin', 'omnivoice-server');
+    const venvServerWin = path.join(omniDir, '.venv', 'Scripts', 'omnivoice-server.exe');
+    const venvServerUnix = path.join(omniDir, '.venv', 'bin', 'omnivoice-server');
+
+    if (fs.existsSync(serverWin)) spawnCmd = serverWin;
+    else if (fs.existsSync(serverUnix)) spawnCmd = serverUnix;
+    else if (fs.existsSync(venvServerWin)) spawnCmd = venvServerWin;
+    else if (fs.existsSync(venvServerUnix)) spawnCmd = venvServerUnix;
+    else if (fs.existsSync(rootServerWin)) spawnCmd = rootServerWin;
+    else if (fs.existsSync(rootServerUnix)) spawnCmd = rootServerUnix;
+
+    spawnArgs = ['--port', String(OMNIVOICE_PORT)];
+  }
+
+  if (!spawnCmd) {
+    console.log('[Somleng] OmniVoice python interpreter or server executable not found, skipping');
     return;
   }
 
-  console.log(`[Somleng] Starting OmniVoice server on port ${OMNIVOICE_PORT} from: ${omniDir}`);
+  console.log(`[Somleng] Starting OmniVoice server on port ${OMNIVOICE_PORT} from: ${omniDir} using ${spawnCmd} ${spawnArgs.join(' ')}`);
 
   const logStream = getLogStream(OMNIVOICE_LOG_FILE);
 
-  omnivoiceProcess = spawn(omniServer, ['--port', String(OMNIVOICE_PORT)], {
+  omnivoiceProcess = spawn(spawnCmd, spawnArgs, {
     cwd: omniDir,
     stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: true,
@@ -1045,7 +1067,18 @@ ipcMain.handle('get-omnivoice-config', async () => {
   const rootServerWin = omniDir ? path.join(omniDir, 'omnivoice-server.exe') : null;
   const rootServerUnix = omniDir ? path.join(omniDir, 'omnivoice-server') : null;
 
-  const serverExists = !!((serverWin && fs.existsSync(serverWin)) || 
+  const pythonWin = omniDir ? path.join(omniDir, 'omnivoice_env', 'Scripts', 'python.exe') : null;
+  const pythonUnix = omniDir ? path.join(omniDir, 'omnivoice_env', 'bin', 'python') : null;
+  const venvPythonWin = omniDir ? path.join(omniDir, '.venv', 'Scripts', 'python.exe') : null;
+  const venvPythonUnix = omniDir ? path.join(omniDir, '.venv', 'bin', 'python') : null;
+
+  const pythonExists = !!((pythonWin && fs.existsSync(pythonWin)) ||
+                          (pythonUnix && fs.existsSync(pythonUnix)) ||
+                          (venvPythonWin && fs.existsSync(venvPythonWin)) ||
+                          (venvPythonUnix && fs.existsSync(venvPythonUnix)));
+
+  const serverExists = pythonExists ||
+                       !!((serverWin && fs.existsSync(serverWin)) || 
                          (serverUnix && fs.existsSync(serverUnix)) ||
                          (venvServerWin && fs.existsSync(venvServerWin)) ||
                          (venvServerUnix && fs.existsSync(venvServerUnix)) ||
