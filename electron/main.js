@@ -392,7 +392,7 @@ async function startNextServer() {
   const env = {
     ...process.env,
     PORT: String(NEXT_PORT),
-    HOSTNAME: 'localhost',
+    HOSTNAME: '127.0.0.1',
     NODE_ENV: 'production',
     TTS_PROVIDER: 'voxcpm2',
     VOXCPM2_API_URL: voxcpm2Url,
@@ -1304,7 +1304,7 @@ ipcMain.handle('stop-fishspeech', async () => {
 
 // --- Create Window ---
 
-function createWindow() {
+function createWindow(serverError = null) {
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -1322,19 +1322,33 @@ function createWindow() {
     },
   });
 
+  if (serverError) {
+    mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(getErrorHTML(serverError))}`);
+    mainWindow.show();
+    return;
+  }
+
   // Show loading screen
   mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(getLoadingHTML())}`);
   mainWindow.show();
 
   // Load actual app
-  mainWindow.loadURL(`http://localhost:${NEXT_PORT}/en/studio`);
+  mainWindow.loadURL(`http://127.0.0.1:${NEXT_PORT}/en/studio`);
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http') && !url.includes(`localhost:${NEXT_PORT}`)) {
+    if (url.startsWith('http') && !url.includes(`127.0.0.1:${NEXT_PORT}`) && !url.includes(`localhost:${NEXT_PORT}`)) {
       shell.openExternal(url);
       return { action: 'deny' };
     }
     return { action: 'allow' };
+  });
+
+  // Handle load failure
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+    console.error(`[BrowserWindow] Failed to load URL: ${validatedURL}, Error: ${errorDescription} (${errorCode})`);
+    if (validatedURL.includes(`127.0.0.1:${NEXT_PORT}`) || validatedURL.includes(`localhost:${NEXT_PORT}`)) {
+      mainWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(getErrorHTML(`Failed to load application page: ${errorDescription} (${errorCode})`))}`);
+    }
   });
 
   mainWindow.on('close', (e) => {
@@ -1377,7 +1391,7 @@ function createTray() {
     { type: 'separator' },
     {
       label: 'Open in Browser',
-      click: () => shell.openExternal(`http://localhost:${NEXT_PORT}/en/studio`),
+      click: () => shell.openExternal(`http://127.0.0.1:${NEXT_PORT}/en/studio`),
     },
     { type: 'separator' },
     {
@@ -1448,6 +1462,85 @@ function getLoadingHTML() {
 </html>`;
 }
 
+// --- Error Diagnostics HTML ---
+
+function getErrorHTML(errorMessage) {
+  const logDir = path.join(require('os').homedir(), '.professor-somleng-tts');
+  let nextjsLog = 'nextjs.log not found';
+  try {
+    const logPath = path.join(logDir, 'nextjs.log');
+    if (fs.existsSync(logPath)) {
+      nextjsLog = fs.readFileSync(logPath, 'utf8').split('\n').slice(-30).join('\n');
+    }
+  } catch (e) {
+    nextjsLog = `Error reading log file: ${e.message}`;
+  }
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0f0a1c 0%, #05020c 100%);
+      color: #f1f5f9; display: flex; align-items: center; justify-content: center;
+      height: 100vh; font-family: 'Segoe UI', -apple-system, system-ui, sans-serif;
+      overflow: hidden; padding: 24px;
+    }
+    .card {
+      background: rgba(20, 15, 35, 0.6);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 16px; width: 100%; max-width: 650px; padding: 32px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+    }
+    .icon { font-size: 48px; margin-bottom: 16px; color: #ef4444; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 12px;
+         background: linear-gradient(135deg, #f87171, #f43f5e);
+         -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .msg { color: #94a3b8; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+    .box-title { font-size: 12px; text-transform: uppercase; color: #a78bfa; font-weight: 600; margin-bottom: 8px; letter-spacing: 0.05em; }
+    .log-box {
+      background: #020105; border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px; padding: 16px; font-family: monospace; font-size: 12px;
+      color: #a7f3d0; overflow-y: auto; max-height: 200px; white-space: pre-wrap;
+      margin-bottom: 24px; line-height: 1.4;
+    }
+    .btn {
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: white; border: none; padding: 12px 24px; font-size: 14px; font-weight: 600;
+      border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(124, 58, 237, 0.3);
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.4); }
+    .btn:active { transform: translateY(0); }
+    .paths { margin-top: 16px; font-size: 11px; color: #64748b; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⚠️</div>
+    <h1>Application Start Error</h1>
+    <p class="msg">${errorMessage}</p>
+    
+    <div class="box-title">Next.js Server Log Output (Last 30 Lines)</div>
+    <div class="log-box">${escapeHTML(nextjsLog)}</div>
+    
+    <button class="btn" onclick="window.location.reload()">Retry Connection</button>
+    
+    <div class="paths">
+      <strong>Log directory:</strong> ${escapeHTML(logDir)}<br/>
+      If the issue persists, please share the logs in the path above.
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // --- App Lifecycle ---
 
 app.whenReady().then(async () => {
@@ -1457,10 +1550,15 @@ app.whenReady().then(async () => {
   startFishSpeech();
 
   // Start Next.js server
-  await startNextServer();
+  try {
+    await startNextServer();
+    createWindow();
+  } catch (error) {
+    console.error('[Somleng] Next.js server failed to start:', error);
+    createWindow(error.message);
+  }
 
-  // Create window and tray
-  createWindow();
+  // Create tray
   createTray();
 });
 
