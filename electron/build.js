@@ -135,6 +135,7 @@ if (fs.existsSync(envSrc)) {
 
 // Step 3: Package with electron-builder
 console.log('\n🔨 Step 3: Packaging with electron-builder...');
-run(`npx electron-builder ${platform.flag} -c.npmRebuild=false`);
+run(`npx electron-builder ${platform.flag} -c.npmRebuild=false --publish never`);
 
 console.log('\n✅ Build complete! Check the dist/ folder for the output.');
+
