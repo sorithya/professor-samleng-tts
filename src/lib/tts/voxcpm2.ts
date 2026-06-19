@@ -287,7 +287,24 @@ export class VoxCPM2Provider implements TtsProvider {
       }
     }
 
-    // 3. Style instruction
+    // 3. Speed/rate instruction
+    if (input.rate !== undefined && input.rate !== 1.0) {
+      if (input.rate <= 0.3) {
+        parts.push('Speak extremely slowly, at a very slow crawl. Pause very long between words and phrases.');
+      } else if (input.rate <= 0.6) {
+        parts.push('Speak very slowly, with long pauses and a slow tempo.');
+      } else if (input.rate <= 0.85) {
+        parts.push('Speak at a slow, relaxed, and unhurried pace.');
+      } else if (input.rate >= 1.7) {
+        parts.push('Speak extremely fast. Read the text as rapidly as possible without pauses.');
+      } else if (input.rate >= 1.4) {
+        parts.push('Speak very fast, with a quick and rapid pace.');
+      } else if (input.rate >= 1.15) {
+        parts.push('Speak slightly faster than normal.');
+      }
+    }
+
+    // 4. Style instruction
     if (style && style !== 'default') {
       const styleInstruction = STYLE_INSTRUCTIONS[style];
       if (styleInstruction) {

@@ -124,7 +124,7 @@ export function ControlSliders() {
             label={t('speed')}
             value={rate}
             onChange={setRate}
-            min={0.5}
+            min={0.2}
             max={2.0}
             step={0.1}
             defaultValue={1.0}

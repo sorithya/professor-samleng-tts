@@ -11,7 +11,7 @@ export const SynthesizeRequestSchema = z.object({
   language: z.string().min(2).max(10),
   voiceId: z.string().min(1),
   style: z.string().optional().default('default'),
-  rate: z.number().min(0.5).max(2.0).optional().default(1.0),
+  rate: z.number().min(0.2).max(2.0).optional().default(1.0),
   pitch: z.number().min(-12).max(12).optional().default(0),
   volume: z.number().min(0).max(1).optional().default(1.0),
   format: z.enum(['mp3', 'wav']).optional().default('mp3'),
