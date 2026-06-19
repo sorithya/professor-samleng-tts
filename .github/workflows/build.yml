@@ -28,7 +28,15 @@ jobs:
       - name: Build Next.js & Package App
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: npm run electron:build:mac
+        run: |
+          npm run electron:build:mac > build.log 2>&1 || (echo "=== BUILD LOG ===" && cat build.log && exit 1)
+
+      - name: Upload Build Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
 
       - name: Upload Installers as Artifacts
         uses: actions/upload-artifact@v4
