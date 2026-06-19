@@ -393,9 +393,10 @@ async function startNextServer() {
     FISHSPEECH_API_URL: fishspeechUrl,
     MAX_CHARS_PER_REQUEST_FREE: '50000',
     NEXT_PUBLIC_MAX_CHARS: '50000',
+    ELECTRON_RUN_AS_NODE: '1',
   };
 
-  nextProcess = spawn('node', [serverInfo.serverJs], {
+  nextProcess = spawn(process.execPath, [serverInfo.serverJs], {
     cwd: serverInfo.cwd,
     env,
     stdio: ['ignore', 'pipe', 'pipe'],
