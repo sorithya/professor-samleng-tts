@@ -28,6 +28,7 @@ const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 const VOXCPM2_LOG_FILE = path.join(CONFIG_DIR, 'voxcpm2.log');
 const OMNIVOICE_LOG_FILE = path.join(CONFIG_DIR, 'omnivoice.log');
 const FISHSPEECH_LOG_FILE = path.join(CONFIG_DIR, 'fishspeech.log');
+const NEXTJS_LOG_FILE = path.join(CONFIG_DIR, 'nextjs.log');
 const FISHSPEECH_PORT = 8080;
 const FISHSPEECH_DIR = isWin
   ? 'C:\\Software\\FishSpeech'
@@ -46,17 +47,23 @@ function getLogStream(logFilePath) {
 }
 
 function killProcessTree(proc) {
-  if (!proc || proc.killed) return;
+  if (!proc) return;
   const pid = proc.pid;
-  console.log(`[Somleng] Terminating process tree for PID ${pid}`);
-  if (isWin) {
-    try {
-      execSync(`taskkill /F /T /PID ${pid}`);
-    } catch (e) {
-      console.warn(`[Somleng] taskkill failed for PID ${pid}:`, e.message);
+  if (pid) {
+    console.log(`[Somleng] Terminating process tree for PID ${pid}`);
+    if (isWin) {
+      try {
+        execSync(`taskkill /F /T /PID ${pid}`);
+      } catch (e) {
+        console.warn(`[Somleng] taskkill failed for PID ${pid}:`, e.message);
+      }
+    } else {
+      try { proc.kill('SIGTERM'); } catch {}
     }
-  } else {
-    try { proc.kill('SIGTERM'); } catch {}
+  } else if (typeof proc.kill === 'function') {
+    try {
+      proc.kill();
+    } catch {}
   }
 }
 
@@ -393,26 +400,35 @@ async function startNextServer() {
     FISHSPEECH_API_URL: fishspeechUrl,
     MAX_CHARS_PER_REQUEST_FREE: '50000',
     NEXT_PUBLIC_MAX_CHARS: '50000',
-    ELECTRON_RUN_AS_NODE: '1',
   };
 
-  nextProcess = spawn(process.execPath, [serverInfo.serverJs], {
+  const { utilityProcess } = require('electron');
+  const logStream = getLogStream(NEXTJS_LOG_FILE);
+
+  nextProcess = utilityProcess.fork(serverInfo.serverJs, [], {
     cwd: serverInfo.cwd,
     env,
-    stdio: ['ignore', 'pipe', 'pipe'],
-    windowsHide: true,
+    stdio: 'pipe',
   });
 
   nextProcess.stdout.on('data', (data) => {
-    console.log(`[Next.js] ${data.toString().trim()}`);
+    const text = data.toString();
+    console.log(`[Next.js] ${text.trim()}`);
+    if (logStream) logStream.write(`[${new Date().toISOString()}] STDOUT: ${text}`);
   });
 
   nextProcess.stderr.on('data', (data) => {
-    console.error(`[Next.js ERR] ${data.toString().trim()}`);
+    const text = data.toString();
+    console.error(`[Next.js ERR] ${text.trim()}`);
+    if (logStream) logStream.write(`[${new Date().toISOString()}] STDERR: ${text}`);
   });
 
-  nextProcess.on('close', (code) => {
+  nextProcess.on('exit', (code) => {
     console.log(`[Next.js] Process exited with code ${code}`);
+    if (logStream) {
+      logStream.write(`[${new Date().toISOString()}] Process exited with code ${code}\n`);
+      logStream.end();
+    }
     if (!isQuitting) {
       setTimeout(() => startNextServer(), 2000);
     }
