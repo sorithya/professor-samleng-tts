@@ -25,7 +25,7 @@ export function VoicePicker() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewCache = useRef<Map<string, string>>(new Map());
 
-  const voices = getVoicesForLanguage(language);
+  const voices = getVoicesForLanguage(language).filter((v) => v.provider === provider);
 
   const stopAudio = useCallback(() => {
     if (audioRef.current) {

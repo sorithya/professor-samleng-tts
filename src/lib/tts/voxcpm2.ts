@@ -39,49 +39,7 @@ const VOICE_CONTROLS: Record<string, string> = {
 
 /* ---------- Voice Catalog ---------- */
 
-const VOXCPM2_VOICES: Voice[] = [
-  {
-    id: 'voxcpm2-design-default',
-    name: 'Somleng (Professional)',
-    language: 'km-KH',
-    gender: 'neutral',
-    provider: 'voxcpm2',
-    supportedStyles: ['default', 'news', 'narration', 'conversational'],
-    isDefault: true,
-  },
-  {
-    id: 'voxcpm2-khmer-news',
-    name: 'Dara (ដារ៉ា - News)',
-    language: 'km-KH',
-    gender: 'male',
-    provider: 'voxcpm2',
-    supportedStyles: ['default', 'news'],
-  },
-  {
-    id: 'voxcpm2-khmer-storyteller',
-    name: 'Bopha (បុប្ផា - Story)',
-    language: 'km-KH',
-    gender: 'female',
-    provider: 'voxcpm2',
-    supportedStyles: ['default', 'narration', 'conversational'],
-  },
-  {
-    id: 'voxcpm2-design-female-warm',
-    name: 'Luna (Warm)',
-    language: 'km-KH',
-    gender: 'female',
-    provider: 'voxcpm2',
-    supportedStyles: ['default', 'conversational', 'calm'],
-  },
-  {
-    id: 'voxcpm2-design-male-deep',
-    name: 'Titan (Deep)',
-    language: 'km-KH',
-    gender: 'male',
-    provider: 'voxcpm2',
-    supportedStyles: ['default', 'narration', 'serious'],
-  },
-];
+const VOXCPM2_VOICES: Voice[] = [];
 
 /* ---------- Cloned Voice Type ---------- */
 
@@ -155,10 +113,10 @@ export class VoxCPM2Provider implements TtsProvider {
     if (this.defaultVoicesRegistered) return;
     this.defaultVoicesRegistered = true;
 
-    const voicesDir = path.join(process.cwd(), 'public', 'voices');
+    const voicesDir = path.join(process.cwd(), 'public', 'samples');
     if (!fs.existsSync(voicesDir)) return;
 
-    // Default voice configs — reference audio files bundled with the app
+    // Default voice configs — reference audio files from public/samples
     const defaultVoices: Array<{
       file: string;
       id: string;
@@ -167,16 +125,52 @@ export class VoxCPM2Provider implements TtsProvider {
       transcript?: string;
     }> = [
       {
-        file: 'vipassana-ref.mp3',
-        id: 'default-vipassana',
-        name: 'Vipassana (វិបស្សនា)',
-        description: 'Professional Khmer male voice, clear articulation, natural and authoritative, like a professional news reader',
+        file: 'Admin កន្និកា.wav',
+        id: 'sample-admin-kanitha',
+        name: 'Admin Kanitha (Admin កន្និកា)',
+        description: 'Voice profile of Admin Kanitha',
       },
       {
-        file: 'tinfi-ref.mp3',
-        id: 'default-tinfi',
-        name: 'ទិនហ្វី (Tinfi)',
-        description: 'Young Khmer voice, natural conversational style, warm and engaging',
+        file: 'The Kanitha Show.wav',
+        id: 'sample-kanitha-show',
+        name: 'The Kanitha Show',
+        description: 'Voice profile of The Kanitha Show host',
+      },
+      {
+        file: 'គុណម្ចាស់គ្រូ គូ សុភាព.wav',
+        id: 'sample-kou-sopheap',
+        name: 'Kou Sopheap (គូ សុភាព)',
+        description: 'Voice profile of Kou Sopheap',
+      },
+      {
+        file: 'វណ្ណា.wav',
+        id: 'sample-vanna',
+        name: 'Vanna (វណ្ណា)',
+        description: 'Voice profile of Vanna',
+      },
+      {
+        file: 'សុធា.wav',
+        id: 'sample-sothea',
+        name: 'Sothea (សុធា)',
+        description: 'Voice profile of Sothea',
+      },
+      {
+        file: 'ស៊ឺ-ម៉ាអ៊ី 2.mp3',
+        id: 'sample-sima-yi-2',
+        name: 'Sima Yi 2 (ស៊ឺ-ម៉ាអ៊ី 2)',
+        description: 'Voice profile of Sima Yi 2',
+      },
+      {
+        file: 'ស៊ឺ-ម៉ាអ៊ី.mp3',
+        id: 'sample-sima-yi',
+        name: 'Sima Yi (ស៊ឺ-ម៉ាអ៊ី)',
+        description: 'Voice profile of Sima Yi',
+      },
+      {
+        file: 'ស្រីពៅ.wav',
+        id: 'sample-srey-pov',
+        name: 'Srey Pov (ស្រីពៅ)',
+        description: 'Voice profile of Srey Pov',
       },
     ];
 
@@ -189,7 +183,8 @@ export class VoxCPM2Provider implements TtsProvider {
       try {
         const buffer = fs.readFileSync(filePath);
         const formData = new FormData();
-        const blob = new Blob([buffer], { type: 'audio/mp3' });
+        const mimeType = config.file.endsWith('.wav') ? 'audio/wav' : 'audio/mpeg';
+        const blob = new Blob([buffer], { type: mimeType });
         formData.append('files', blob, config.file);
 
         const uploadResponse = await fetch(`${this.baseUrl}/gradio_api/upload`, {

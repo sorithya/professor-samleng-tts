@@ -66,7 +66,7 @@ const DEFAULT_STATE: StudioState = {
   text: '',
   provider: 'voxcpm2',
   language: 'km-KH',
-  voiceId: 'default-vipassana',
+  voiceId: 'sample-admin-kanitha',
   style: 'default',
   rate: 1.0,
   pitch: 0,
@@ -93,7 +93,7 @@ export const useStudioStore = create<StudioState & StudioActions>((set, get) => 
   setProvider: (provider) => set({ provider }),
   setLanguage: (language) => {
     const voiceMap: Record<string, string> = {
-      'km-KH': 'default-vipassana',
+      'km-KH': 'sample-admin-kanitha',
       'en-US': 'voxcpm2-en-professional',
     };
     set({
