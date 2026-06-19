@@ -87,6 +87,7 @@ function saveConfig(config) {
 function autoDetectVoxCPM2() {
   const candidates = isWin
     ? [
+        'C:\\Clone Voice\\VoxCPM2AI',
         'C:\\Software\\VoxCPM2AI',
         'D:\\Software\\VoxCPM2AI',
         'D:\\VoxCPM2AI',
@@ -539,10 +540,28 @@ function getOmniVoiceDir() {
     const resolved = resolveOmniVoiceRoot(config.omnivoicePath);
     if (resolved) return resolved;
   }
-  if (isValidOmniVoiceDir(OMNIVOICE_DIR)) {
-    config.omnivoicePath = OMNIVOICE_DIR;
-    saveConfig(config);
-    return OMNIVOICE_DIR;
+
+  const candidates = isWin
+    ? [
+        'C:\\Clone Voice\\OmniVoice',
+        'C:\\Software\\OmniVoice',
+        'D:\\Software\\OmniVoice',
+        'D:\\OmniVoice',
+        'C:\\OmniVoice',
+        path.join(homeDir, 'OmniVoice'),
+      ]
+    : [
+        path.join(homeDir, 'Software', 'OmniVoice'),
+        path.join(homeDir, 'OmniVoice'),
+      ];
+
+  for (const dir of candidates) {
+    if (isValidOmniVoiceDir(dir)) {
+      config.omnivoicePath = dir;
+      saveConfig(config);
+      console.log(`[OmniVoice] Auto-detected at: ${dir}`);
+      return dir;
+    }
   }
   return null;
 }
@@ -664,10 +683,28 @@ function getFishSpeechDir() {
     const resolved = resolveFishSpeechRoot(config.fishspeechPath);
     if (resolved) return resolved;
   }
-  if (isValidFishSpeechDir(FISHSPEECH_DIR)) {
-    config.fishspeechPath = FISHSPEECH_DIR;
-    saveConfig(config);
-    return FISHSPEECH_DIR;
+
+  const candidates = isWin
+    ? [
+        'C:\\Clone Voice\\fish-speech',
+        'C:\\Software\\fish-speech',
+        'D:\\Software\\fish-speech',
+        'D:\\fish-speech',
+        'C:\\fish-speech',
+        path.join(homeDir, 'fish-speech'),
+      ]
+    : [
+        path.join(homeDir, 'Software', 'fish-speech'),
+        path.join(homeDir, 'fish-speech'),
+      ];
+
+  for (const dir of candidates) {
+    if (isValidFishSpeechDir(dir)) {
+      config.fishspeechPath = dir;
+      saveConfig(config);
+      console.log(`[Fish Speech] Auto-detected at: ${dir}`);
+      return dir;
+    }
   }
   return null;
 }
